@@ -110,21 +110,9 @@ class App(object):
 		self.video_file = video_file
 		#self.cam = create_capture(camera_id)
 
-<<<<<<< HEAD
 	def run(self):
-
 		# Path to video filenames
 		vidcap = cv2.VideoCapture(self.video_file)
-=======
-    def run(self):
-
-        # Path to video filenames
-        vidfile = '689_1955.mov'
-        # Modify path accordingly to directory with videos
-        VIDEO_PATH = "/Users/kage/crossfitvideos/{}".format(vidfile)
-        vidcap = cv2.VideoCapture(VIDEO_PATH)
->>>>>>> feature-cow
-
 		while True:
 			# Skip 10 frames at a time
 			for i in xrange(10):
@@ -152,31 +140,15 @@ class App(object):
 					# Draw the predicted name (folder name...):
 					draw_str(imgout, (x0-20,y0-20), self.model.subject_names[prediction])
 					self.TagGenerator.addAthlete(self.model.subject_names[prediction], vidcap.get(0)/1000)
-
-
-<<<<<<< HEAD
 			cv2.imshow('videofacerec', imgout)
 			# Show image & exit on escape:
 			ch = cv2.waitKey(10)
 			if ch == 27:
 				break
 			# End program at end of video
-			if vidcap.get(2) == 1:
-				return self.TagGenerator.namedb
-=======
-            cv2.imshow('videofacerec', imgout)
-            # Show image & exit on escape:
-            ch = cv2.waitKey(10)
-            if ch == 27:
-                break
-            # End program at end of video
-            print vidcap.get(2)
-            if vidcap.get(2) >= 0.90:
-                print self.TagGenerator.namedb
-                break
->>>>>>> feature-cow
-
-
+			if vidcap.get(2) >= 0.90:
+				print self.TagGenerator.namedb
+				break
 
 if __name__ == '__main__':
 	from optparse import OptionParser

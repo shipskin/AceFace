@@ -109,8 +109,12 @@ class App(object):
         self.TagGenerator = TagGenerator()
         #self.cam = create_capture(camera_id)
 
-    def run(self):
-        vidcap = cv2.VideoCapture('/Users/kage/Documents/MEDIA/Meridian Regional.mp4')
+    def run(self,vidfile):
+
+        # Path to video filenames
+        vidfile = vidfile
+        VIDEO_PATH = "/Users/kage/crossfitvideos/{}".format(vidfile)
+        vidcap = cv2.VideoCapture(VIEDO_PATH)
 
         while True:
             # Skip 10 frames at a time
@@ -148,8 +152,8 @@ class App(object):
                 break
             # End program at end of video
             if vidcap.get(2) == 1:
-                print self.TagGenerator.namedb
-                break
+                return self.TagGenerator.namedb
+
 
 
 if __name__ == '__main__':

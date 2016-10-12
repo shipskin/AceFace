@@ -109,12 +109,13 @@ class App(object):
         self.TagGenerator = TagGenerator()
         #self.cam = create_capture(camera_id)
 
-    def run(self,vidfile):
+    def run(self):
 
         # Path to video filenames
-        vidfile = vidfile
+        vidfile = '689_1955.mov'
+        # Modify path accordingly to directory with videos
         VIDEO_PATH = "/Users/kage/crossfitvideos/{}".format(vidfile)
-        vidcap = cv2.VideoCapture(VIEDO_PATH)
+        vidcap = cv2.VideoCapture(VIDEO_PATH)
 
         while True:
             # Skip 10 frames at a time
@@ -151,8 +152,10 @@ class App(object):
             if ch == 27:
                 break
             # End program at end of video
-            if vidcap.get(2) == 1:
-                return self.TagGenerator.namedb
+            print vidcap.get(2)
+            if vidcap.get(2) >= 0.90:
+                print self.TagGenerator.namedb
+                break
 
 
 

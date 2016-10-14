@@ -134,21 +134,21 @@ class App(object):
 
 				# Drop detection if threshold "distance" above value
 				if predict_distance < 1200:
-					print predict_distance
+					#print predict_distance
 					# Draw the face area in image:
 					cv2.rectangle(imgout, (x0,y0),(x1,y1),(0,255,0),2)
 					# Draw the predicted name (folder name...):
 					draw_str(imgout, (x0-20,y0-20), self.model.subject_names[prediction])
 					self.TagGenerator.addAthlete(self.model.subject_names[prediction], vidcap.get(0)/1000)
-			cv2.imshow('videofacerec', imgout)
+			#cv2.imshow('videofacerec', imgout)
 			# Show image & exit on escape:
 			ch = cv2.waitKey(10)
 			if ch == 27:
 				break
 			# End program at end of video
 			if vidcap.get(2) >= 0.90:
-				print self.TagGenerator.namedb
-				break
+				return self.TagGenerator.namedb
+
 
 if __name__ == '__main__':
 	from optparse import OptionParser

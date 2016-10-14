@@ -148,7 +148,7 @@ class App(object):
 			if ch == 27:
 				break
 			# End program at end of video
-			frame_count += 1
+			frame_count += 10
 			#if vidcap.get(2) >= 0.90:
 		print self.TagGenerator.namedb
 
@@ -173,14 +173,14 @@ if __name__ == '__main__':
 		help="Sets the path to the Haar Cascade used for the face detection part (default: haarcascade_frontalface_alt2.xml).")
 	parser.add_option("-f", "--video", action="store", dest="vid_filename", type="string", default=None, help="Video filename.")
 	# Show the options to the user:
-	#parser.print_help()
-	#print "Press [ESC] to exit the program!"
-	#print "Script output:"
+	parser.print_help()
+	print "Press [ESC] to exit the program!"
+	print "Script output:"
 	# Parse arguments:
 	(options, args) = parser.parse_args()
 	# Check if a model name was passed:
 	if len(args) == 0:
-		#print "[Error] No prediction model was given."
+		print "[Error] No prediction model was given."
 		sys.exit()
 	# This model will be used (or created if the training parameter (-t, --train) exists:
 	model_filename = args[0]
@@ -211,7 +211,7 @@ if __name__ == '__main__':
 			sys.exit()
 		# Reads the images, labels and folder_names from a given dataset. Images
 		# are resized to given size on the fly:
-		#print "Loading dataset..."
+		print "Loading dataset..."
 		[images, labels, subject_names] = read_images(options.dataset, image_size)
 		# Zip us a {label, name} dict from the given data:
 		list_of_labels = list(xrange(max(labels)+1))
@@ -222,7 +222,7 @@ if __name__ == '__main__':
 		# given, the script allows you to perform a k-fold Cross Validation before
 		# the Detection & Recognition part starts:
 		if options.numfolds:
-			#print "Validating model with %s folds..." % options.numfolds
+			print "Validating model with %s folds..." % options.numfolds
 			# We want to have some log output, so set up a new logging handler
 			# and point it to stdout:
 			handler = logging.StreamHandler(sys.stdout)
@@ -237,13 +237,13 @@ if __name__ == '__main__':
 			crossval.validate(images, labels)
 			crossval.print_results()
 		# Compute the model:
-		#print "Computing the model..."
+		print "Computing the model..."
 		model.compute(images, labels)
 		# And save the model, which uses Pythons pickle module:
-		#print "Saving the model..."
+		print "Saving the model..."
 		save_model(model_filename, model)
 	else:
-		#print "Loading the model..."
+		print "Loading the model..."
 		model = load_model(model_filename)
 	# We operate on an ExtendedPredictableModel. Quit the application if this
 	# isn't what we expect it to be:

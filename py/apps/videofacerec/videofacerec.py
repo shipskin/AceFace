@@ -114,8 +114,10 @@ class App(object):
 		# Path to video filenames
 		vidcap = cv2.VideoCapture(self.video_file)
 		frames = vidcap.get(7)
+
 		frame_count = 0
-		while frame_count < frames:
+		while frame_count <= frames-12:
+			print frame_count
 			# Skip 10 frames at a time
 			for i in xrange(10):
 				vidcap.grab()
@@ -142,13 +144,13 @@ class App(object):
 					# Draw the predicted name (folder name...):
 					draw_str(imgout, (x0-20,y0-20), self.model.subject_names[prediction])
 					self.TagGenerator.addAthlete(self.model.subject_names[prediction], vidcap.get(0)/1000)
-			#cv2.imshow('videofacerec', imgout)
+			cv2.imshow('videofacerec', imgout)
 			# Show image & exit on escape:
 			ch = cv2.waitKey(10)
 			if ch == 27:
 				break
 			# End program at end of video
-			frame_count += 1
+			frame_count += 10
 			#if vidcap.get(2) >= 0.90:
 		print self.TagGenerator.namedb
 
@@ -255,4 +257,5 @@ if __name__ == '__main__':
 	#print "Starting application..."
 	App(model=model,
 		camera_id=options.camera_id,
-		cascade_filename=options.cascade_filename, video_file=options.vid_filename).run()
+		cascade_filename=options.cascade_filename,
+		video_file=options.vid_filename).run()

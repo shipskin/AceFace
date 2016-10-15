@@ -18,9 +18,19 @@ def vid_parse(vid_dir_path):
 				'-f',
 				os.path.join(vid_dir_path, vid)]
 			proc = subprocess.check_output(cmd)
-
-			return proc
+			print proc
+			return vid,proc
 			#return json.loads(json_line)
 
 
-print vid_parse(vid_dir_path)
+def gener_db():
+	vid,nametag = vid_parse(vid_dir_path)
+	for name in nametag:
+		print name['hits']
+		print vid
+
+
+testata = {'annie_thorisdottir\n': {'hits': 19, 'time': 22}, 'mat_fraser\n': {'hits': 4, 'time': 21}, 'katrin_davidsdottir\n': {'hits': 6, 'time': 25}, 'rich_froning\n': {'hits': 6, 'time': 27}, 'samantha_briggs\n': {'hits': 36, 'time': 33}, 'emily_bridgers': {'hits': 7, 'time': 22}}
+
+
+gener_db()

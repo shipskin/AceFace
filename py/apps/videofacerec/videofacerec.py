@@ -117,7 +117,6 @@ class App(object):
 
 		frame_count = 0
 		while frame_count <= frames-12:
-			print frame_count
 			# Skip 10 frames at a time
 			for i in xrange(10):
 				vidcap.grab()
@@ -152,7 +151,7 @@ class App(object):
 			# End program at end of video
 			frame_count += 10
 			#if vidcap.get(2) >= 0.90:
-		print self.TagGenerator.namedb
+		return self.TagGenerator.namedb
 
 
 if __name__ == '__main__':

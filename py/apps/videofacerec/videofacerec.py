@@ -154,76 +154,94 @@ class App(object):
 		return self.TagGenerator.namedb
 
 
-if __name__ == '__main__':
-	from optparse import OptionParser
+def vid_run_main(model_param,**kwargs):
+
+	# KEYS: model_param,dataset_param,cascade_param,vidpath_param,resize_param
+	model_param = model_param
+	PARAMETERS = {'dataset_param':None,'cascade_param':None,'vidpath_param':None,'resize_param':None}
+	for key in PARAMETERS:
+		print 'initializing {}...'.format(key)
+
+		try:
+			if kwargs[key]:
+				PARAMETERS[key] = kwargs[key]
+				print 'initialized {} = {}'.format(key,kwargs[key])
+			else:
+				print "No parameter - {} - will be set to default".format(key)
+		except KeyError:
+			pass
+
+
 	# model.pkl is a pickled (hopefully trained) PredictableModel, which is
 	# used to make predictions. You can learn a model yourself by passing the
 	# parameter -d (or --dataset) to learn the model from a given dataset.
-	usage = "usage: %prog [options] model_filename"
 	# Add options for training, resizing, validation and setting the camera id:
-	parser = OptionParser(usage=usage)
-	parser.add_option("-r", "--resize", action="store", type="string", dest="size", default="100x100",
-		help="Resizes the given dataset to a given size in format [width]x[height] (default: 100x100).")
-	parser.add_option("-v", "--validate", action="store", dest="numfolds", type="int", default=None,
-		help="Performs a k-fold cross validation on the dataset, if given (default: None).")
-	parser.add_option("-t", "--train", action="store", dest="dataset", type="string", default=None,
-		help="Trains the model on the given dataset.")
-	parser.add_option("-i", "--id", action="store", dest="camera_id", type="int", default=0,
-		help="Sets the Camera Id to be used (default: 0).")
-	parser.add_option("-c", "--cascade", action="store", dest="cascade_filename", default="haarcascade_frontalface_alt2.xml",
-		help="Sets the path to the Haar Cascade used for the face detection part (default: haarcascade_frontalface_alt2.xml).")
-	parser.add_option("-f", "--video", action="store", dest="vid_filename", type="string", default=None, help="Video filename.")
-	# Show the options to the user:
-	#parser.print_help()
-	#print "Press [ESC] to exit the program!"
-	#print "Script output:"
-	# Parse arguments:
-	(options, args) = parser.parse_args()
-	# Check if a model name was passed:
-	if len(args) == 0:
-		#print "[Error] No prediction model was given."
-		sys.exit()
+
+	if model_param != None:
+		model_filename = model_param
+		print "Model = {}".format(model_filename)
+	else:
+		print "[Error] No prediction model was given."
+		sys.exit
+
 	# This model will be used (or created if the training parameter (-t, --train) exists:
-	model_filename = args[0]
 	# Check if the given model exists, if no dataset was passed:
-	if (options.dataset is None) and (not os.path.exists(model_filename)):
-		print "[Error] No prediction model found at '%s'." % model_filename
+	if (PARAMETERS['dataset_param'] is None) and (not os.path.exists(model_filename)):
+		print "[Error] No prediction model found at {}.".format(model_filename)
 		sys.exit()
+
 	# Check if the given (or default) cascade file exists:
-	if not os.path.exists(options.cascade_filename):
-		print "[Error] No Cascade File found at '%s'." % options.cascade_filename
+	if PARAMETERS['cascade_param'] != None:
+		cascade_filename = PARAMETERS['cascade_param']
+	else: # Set default
+		cascade_filename = "haarcascade_frontalface_alt2.xml"
+	if not os.path.exists(cascade_filename):
+		print "[Error] No Cascade File found at {}.".format(cascade_filename)
 		sys.exit()
-	if not os.path.exists(options.vid_filename):
-		print "[Error] No video filename found at '{}'".format(options.vid_filename)
+
+	# Check if video filename given
+	if PARAMETERS['vidpath_param'] != None:
+		vid_filename = PARAMETERS['vidpath_param']
+	else: # Set default for testing
+		vid_filename = '/Users/kage/xvids/test/annie.mp4'
+	if not os.path.exists(vid_filename):
+		print "[Error] No video filename found at '{}'".format(vid_filename)
 	# We are resizing the images to a fixed size, as this is neccessary for some of
 	# the algorithms, some algorithms like LBPH don't have this requirement. To
 	# prevent problems from popping up, we resize them with a default value if none
 	# was given:
+	if PARAMETERS['resize_param'] != None:
+		size = PARAMETERS['resize_param']
+	else: # Set default value
+		size = "100x100"
 	try:
-		image_size = (int(options.size.split("x")[0]), int(options.size.split("x")[1]))
+		image_size = (int(size.split("x")[0]), int(size.split("x")[1]))
 	except:
 		print "[Error] Unable to parse the given image size '%s'. Please pass it in the format [width]x[height]!" % options.size
 		sys.exit()
+
 	# We have got a dataset to learn a new model from:
-	if options.dataset:
+	dataset = PARAMETERS['dataset_param']
+	if dataset:
 		# Check if the given dataset exists:
 		if not os.path.exists(options.dataset):
 			print "[Error] No dataset found at '%s'." % dataset_path
 			sys.exit()
 		# Reads the images, labels and folder_names from a given dataset. Images
 		# are resized to given size on the fly:
-		#print "Loading dataset..."
-		[images, labels, subject_names] = read_images(options.dataset, image_size)
+		print "Loading dataset..."
+		[images, labels, subject_names] = read_images(dataset, image_size)
 		# Zip us a {label, name} dict from the given data:
 		list_of_labels = list(xrange(max(labels)+1))
 		subject_dictionary = dict(zip(list_of_labels, subject_names))
 		# Get the model we want to compute:
 		model = get_model(image_size=image_size, subject_names=subject_dictionary)
+
 		# Sometimes you want to know how good the model may perform on the data
 		# given, the script allows you to perform a k-fold Cross Validation before
 		# the Detection & Recognition part starts:
-		if options.numfolds:
-			#print "Validating model with %s folds..." % options.numfolds
+		if numfolds:
+			print "Validating model with %s folds..." % options.numfolds
 			# We want to have some log output, so set up a new logging handler
 			# and point it to stdout:
 			handler = logging.StreamHandler(sys.stdout)
@@ -234,14 +252,14 @@ if __name__ == '__main__':
 			logger.addHandler(handler)
 			logger.setLevel(logging.DEBUG)
 			# Perform the validation & print results:
-			crossval = KFoldCrossValidation(model, k=options.numfolds)
+			crossval = KFoldCrossValidation(model, k=numfolds)
 			crossval.validate(images, labels)
 			crossval.print_results()
 		# Compute the model:
-		#print "Computing the model..."
+		print "Computing the model..."
 		model.compute(images, labels)
 		# And save the model, which uses Pythons pickle module:
-		#print "Saving the model..."
+		print "Saving the model..."
 		save_model(model_filename, model)
 	else:
 		#print "Loading the model..."
@@ -255,6 +273,6 @@ if __name__ == '__main__':
 	# and the image size the incoming webcam or video images are resized to:
 	#print "Starting application..."
 	App(model=model,
-		camera_id=options.camera_id,
-		cascade_filename=options.cascade_filename,
-		video_file=options.vid_filename).run()
+		camera_id=0,
+		cascade_filename=cascade_filename,
+		video_file=vid_filename).run()

@@ -154,11 +154,11 @@ class App(object):
 		return self.TagGenerator.namedb
 
 
-def vid_run_main(model_param,**kwargs):
+def vid_run_main(**kwargs):
 
 	# KEYS: model_param,dataset_param,cascade_param,vidpath_param,resize_param
-	model_param = model_param
-	PARAMETERS = {'dataset_param':None,'cascade_param':None,'vidpath_param':None,'resize_param':None}
+
+	PARAMETERS = {'model_param': None,'dataset_param':None,'cascade_param':None,'vidpath_param':None,'resize_param':None}
 	for key in PARAMETERS:
 		print 'initializing {}...'.format(key)
 
@@ -177,8 +177,8 @@ def vid_run_main(model_param,**kwargs):
 	# parameter -d (or --dataset) to learn the model from a given dataset.
 	# Add options for training, resizing, validation and setting the camera id:
 
-	if model_param != None:
-		model_filename = model_param
+	if PARAMETERS['model_param'] != None:
+		model_filename = PARAMETERS['model_param']
 		print "Model = {}".format(model_filename)
 	else:
 		print "[Error] No prediction model was given."
@@ -224,7 +224,7 @@ def vid_run_main(model_param,**kwargs):
 	dataset = PARAMETERS['dataset_param']
 	if dataset:
 		# Check if the given dataset exists:
-		if not os.path.exists(options.dataset):
+		if not os.path.exists(dataset):
 			print "[Error] No dataset found at '%s'." % dataset_path
 			sys.exit()
 		# Reads the images, labels and folder_names from a given dataset. Images
@@ -240,6 +240,7 @@ def vid_run_main(model_param,**kwargs):
 		# Sometimes you want to know how good the model may perform on the data
 		# given, the script allows you to perform a k-fold Cross Validation before
 		# the Detection & Recognition part starts:
+		'''
 		if numfolds:
 			print "Validating model with %s folds..." % options.numfolds
 			# We want to have some log output, so set up a new logging handler
@@ -255,6 +256,7 @@ def vid_run_main(model_param,**kwargs):
 			crossval = KFoldCrossValidation(model, k=numfolds)
 			crossval.validate(images, labels)
 			crossval.print_results()
+		'''
 		# Compute the model:
 		print "Computing the model..."
 		model.compute(images, labels)

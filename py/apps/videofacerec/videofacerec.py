@@ -116,9 +116,9 @@ class App(object):
 		frames = vidcap.get(7)
 
 		frame_count = 0
-		while frame_count <= frames-12:
+		while frame_count <= frames-100:
 			# Skip 10 frames at a time
-			for i in xrange(10):
+			for i in xrange(100):
 				vidcap.grab()
 			# Retrieve frame for detection
 			ret, frame =  vidcap.read()
@@ -149,7 +149,7 @@ class App(object):
 			if ch == 27:
 				break
 			# End program at end of video
-			frame_count += 10
+			frame_count += 100
 			#if vidcap.get(2) >= 0.90:
 		return self.TagGenerator.namedb
 
@@ -273,8 +273,9 @@ def vid_run_main(**kwargs):
 		sys.exit()
 	# Now it's time to finally start the Application! It simply get's the model
 	# and the image size the incoming webcam or video images are resized to:
-	#print "Starting application..."
-	App(model=model,
-		camera_id=0,
-		cascade_filename=cascade_filename,
-		video_file=vid_filename).run()
+	print "Starting application..."
+	nametags = App(model=model,
+				camera_id=0,
+				cascade_filename=cascade_filename,
+				video_file=vid_filename).run()
+	return nametags

@@ -118,7 +118,7 @@ class App(object):
 		frame_count = 0
 		while frame_count <= frames-100:
 			# Skip 10 frames at a time
-			for i in xrange(100):
+			for i in xrange(10):
 				vidcap.grab()
 			# Retrieve frame for detection
 			ret, frame =  vidcap.read()
@@ -143,7 +143,7 @@ class App(object):
 					# Draw the predicted name (folder name...):
 					draw_str(imgout, (x0-20,y0-20), self.model.subject_names[prediction])
 					self.TagGenerator.addAthlete(self.model.subject_names[prediction], vidcap.get(0)/1000)
-			cv2.imshow('videofacerec', imgout)
+			print frame_count
 			# Show image & exit on escape:
 			ch = cv2.waitKey(10)
 			if ch == 27:

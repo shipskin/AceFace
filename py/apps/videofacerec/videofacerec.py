@@ -99,6 +99,7 @@ def read_images(path, image_size=None):
 					print "Unexpected error:", sys.exc_info()[0]
 					raise
 			c = c+1
+
 	return [X,y,folder_names]
 
 
@@ -116,7 +117,7 @@ class App(object):
 		frames = vidcap.get(7)
 
 		frame_count = 0
-		while frame_count <= frames-100:
+		while frame_count <= frames-10:
 			# Skip 10 frames at a time
 			for i in xrange(10):
 				vidcap.grab()
@@ -134,7 +135,7 @@ class App(object):
 				# Get a prediction from the model:
 				prediction = self.model.predict(face)[0]
 				predict_distance = self.model.predict(face)[1]['distances']
-
+				
 				# Drop detection if threshold "distance" above value
 				if predict_distance < 1200:
 					#print predict_distance
@@ -143,13 +144,13 @@ class App(object):
 					# Draw the predicted name (folder name...):
 					draw_str(imgout, (x0-20,y0-20), self.model.subject_names[prediction])
 					self.TagGenerator.addAthlete(self.model.subject_names[prediction], vidcap.get(0)/1000)
-			print frame_count
+			cv2.imshow('videofacerec', imgout)
 			# Show image & exit on escape:
 			ch = cv2.waitKey(10)
 			if ch == 27:
 				break
 			# End program at end of video
-			frame_count += 100
+			frame_count += 10
 			#if vidcap.get(2) >= 0.90:
 		return self.TagGenerator.namedb
 

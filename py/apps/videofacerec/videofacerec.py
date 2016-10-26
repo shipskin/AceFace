@@ -14,6 +14,8 @@ import sys
 sys.path.append("../..")
 # facerec imports
 from facerec.model import PredictableModel
+from facerec.preprocessing import TanTriggsPreprocessing
+from facerec.operators import ChainOperator
 from facerec.feature import Fisherfaces
 from facerec.distance import EuclideanDistance
 from facerec.classifier import NearestNeighbor
@@ -41,7 +43,7 @@ def get_model(image_size, subject_names):
 		is the method to return it from!
 	"""
 	# Define the Fisherfaces Method as Feature Extraction method:
-	feature = Fisherfaces()
+	feature = ChainOperator(TanTriggsPreprocessing(), Fisherfaces())
 	# Define a 1-NN classifier with Euclidean Distance:
 	classifier = NearestNeighbor(dist_metric=EuclideanDistance(), k=1)
 	# Return the model as the combination:
@@ -225,7 +227,7 @@ def vid_run_main(**kwargs):
 	if dataset:
 		# Check if the given dataset exists:
 		if not os.path.exists(dataset):
-			print "[Error] No dataset found at '%s'." % dataset_path
+			print "[Error] No dataset found at '%s'." % dataset
 			sys.exit()
 		# Reads the images, labels and folder_names from a given dataset. Images
 		# are resized to given size on the fly:

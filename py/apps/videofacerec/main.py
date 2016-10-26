@@ -24,7 +24,7 @@ def vid_parse(vid_dir_path):
 			nametags = initiate_vid(
 				model_param = 'model.pkl',
 				vidpath_param = vid_dir_path+'/'+vid,
-				dataset_param = '/Users/kage/faceimagesDB/facedb')
+				dataset_param = '/Users/Stephen/faceimagesDB/histodb')
 			yield [vid,nametags]
 
 
@@ -37,7 +37,7 @@ def gener_db(vid_dir_path):
 	print VIDDB
 
 
-gener_db('/Users/kage/xvids')
+gener_db('/Users/Stephen/Movies/crossfit')
 
 testata = {'annie_thorisdottir\n': {'hits': 19, 'time': 22}, 'mat_fraser\n': {'hits': 4, 'time': 21}, 'katrin_davidsdottir\n': {'hits': 6, 'time': 25}, 'rich_froning\n': {'hits': 6, 'time': 27}, 'samantha_briggs\n': {'hits': 36, 'time': 33}, 'emily_bridgers': {'hits': 7, 'time': 22}}
 

@@ -147,6 +147,8 @@ class App(object):
 					self.TagGenerator.addAthlete(self.model.subject_names[prediction], vidcap.get(0)/1000)
 					if raw_input("Found match is this {}".format(prediction)) == 'y':
 						pass
+					else:
+						pass
 			cv2.imshow('videofacerec', imgout)
 			# Show image & exit on escape:
 			ch = cv2.waitKey(10)

@@ -14,6 +14,8 @@ import sys
 sys.path.append("../..")
 # facerec imports
 from facerec.model import PredictableModel
+from facerec.preprocessing import Resize
+from facerec.operators import ChainOperator
 from facerec.feature import Fisherfaces
 from facerec.distance import EuclideanDistance
 from facerec.classifier import NearestNeighbor
@@ -41,7 +43,7 @@ def get_model(image_size, subject_names):
 		is the method to return it from!
 	"""
 	# Define the Fisherfaces Method as Feature Extraction method:
-	feature = Fisherfaces()
+	feature = ChainOperator(Resize(150), Fisherfaces())
 	# Define a 1-NN classifier with Euclidean Distance:
 	classifier = NearestNeighbor(dist_metric=EuclideanDistance(), k=1)
 	# Return the model as the combination:
@@ -135,15 +137,16 @@ class App(object):
 				# Get a prediction from the model:
 				prediction = self.model.predict(face)[0]
 				predict_distance = self.model.predict(face)[1]['distances']
-				
+				threshold = sum(predict_distance)/len(predict_distance)
 				# Drop detection if threshold "distance" above value
-				if predict_distance < 1200:
-					#print predict_distance
+				if threshold < 1000:
 					# Draw the face area in image:
 					cv2.rectangle(imgout, (x0,y0),(x1,y1),(0,255,0),2)
 					# Draw the predicted name (folder name...):
-					draw_str(imgout, (x0-20,y0-20), self.model.subject_names[prediction])
+					test = draw_str(imgout, (x0-20,y0-20), self.model.subject_names[prediction])
 					self.TagGenerator.addAthlete(self.model.subject_names[prediction], vidcap.get(0)/1000)
+					if raw_input("Found match is this {}".format(prediction)) == 'y':
+						pass
 			cv2.imshow('videofacerec', imgout)
 			# Show image & exit on escape:
 			ch = cv2.waitKey(10)
@@ -182,7 +185,7 @@ def vid_run_main(**kwargs):
 		model_filename = PARAMETERS['model_param']
 		print "Model = {}".format(model_filename)
 	else:
-		print "[Error] No prediction model was given."
+		print "[Error] No prediction model was given. Will initalize default with dataset to 'model.pkl'"
 		sys.exit
 
 	# This model will be used (or created if the training parameter (-t, --train) exists:
@@ -223,10 +226,10 @@ def vid_run_main(**kwargs):
 
 	# We have got a dataset to learn a new model from:
 	dataset = PARAMETERS['dataset_param']
-	if dataset:
+	if dataset != None:
 		# Check if the given dataset exists:
 		if not os.path.exists(dataset):
-			print "[Error] No dataset found at '%s'." % dataset_path
+			print "[Error] No dataset found at '%s'." % dataset
 			sys.exit()
 		# Reads the images, labels and folder_names from a given dataset. Images
 		# are resized to given size on the fly:
@@ -262,10 +265,12 @@ def vid_run_main(**kwargs):
 		print "Computing the model..."
 		model.compute(images, labels)
 		# And save the model, which uses Pythons pickle module:
+		# Default module_filename
+		model_filename = "model.pkl"
 		print "Saving the model..."
 		save_model(model_filename, model)
 	else:
-		#print "Loading the model..."
+		print "Loading the model..."
 		model = load_model(model_filename)
 	# We operate on an ExtendedPredictableModel. Quit the application if this
 	# isn't what we expect it to be:

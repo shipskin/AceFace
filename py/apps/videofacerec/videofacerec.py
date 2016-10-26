@@ -139,17 +139,21 @@ class App(object):
 				predict_distance = self.model.predict(face)[1]['distances']
 				threshold = sum(predict_distance)/len(predict_distance)
 				# Drop detection if threshold "distance" above value
+				print self.model.subject_names[prediction]
 				if threshold < 1000:
 					# Draw the face area in image:
 					cv2.rectangle(imgout, (x0,y0),(x1,y1),(0,255,0),2)
 					# Draw the predicted name (folder name...):
-					test = draw_str(imgout, (x0-20,y0-20), self.model.subject_names[prediction])
-					self.TagGenerator.addAthlete(self.model.subject_names[prediction], vidcap.get(0)/1000)
-					if raw_input("Found match is this {}".format(prediction)) == 'y':
-						pass
+					draw_str(imgout, (x0-20,y0-20), self.model.subject_names[prediction])
+					cv2.imshow('test',face)
+					if raw_input("Found match - is this {}\n".format(self.model.subject_names[prediction])) == 'y':
+						self.TagGenerator.addAthlete(self.model.subject_names[prediction], vidcap.get(0)/1000)
+						count = len(os.listdir("/Users/kage/faceimagesDB/facedb/{}".format(self.model.subject_names[prediction])))
+						print count
+						cv2.imwrite("/Users/kage/faceimagesDB/facedb/{}/{}.pgm".format(self.model.subject_names[prediction],count+1), face)
 					else:
 						pass
-			cv2.imshow('videofacerec', imgout)
+			#cv2.imshow('videofacerec', imgout)
 			# Show image & exit on escape:
 			ch = cv2.waitKey(10)
 			if ch == 27:
